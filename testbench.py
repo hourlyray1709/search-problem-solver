@@ -70,6 +70,61 @@ class TestSuite:
             raise Exception("testcase_clone_paths: Failed - Wrong number of nodes in path")
         print("testcase_clone_paths: OK")
 
+    def testcase_simple_solution(self): 
+        # make states
+        state_space = []   
+        for i in range(6): 
+            _state = State(str(i))
+            state_space.append(_state)
+
+        # make actions 
+        actions = [] 
+        for i in range(6): 
+            _action = Action(state_space[i], state_space[(i+1) % 6], 1)
+            actions.append(_action) 
+
+        action_map = ActionMap(actions) 
+
+        # initiate design under test 
+        solver = SearchProblem(state_space[0], state_space, [state_space[5]], action_map)
+        solution = solver.naive_solver()
+
+        # assertion
+        if solution != [str(i) for i in range(6)]: 
+            raise Exception("testcase_simple_solution: Failed - wrong solution")
+        print("testcase_simple_solution: OK")
+
+    def testcase_harder_solution(self): 
+        # make states
+        state_space = []   
+        for i in range(6): 
+            _state = State(str(i))
+            state_space.append(_state)
+
+        # make actions 
+        actions = [] 
+        for i in range(6): 
+            _action = Action(state_space[i], state_space[(i+1) % 6], 1)
+            actions.append(_action) 
+
+        _action = Action(state_space[0], state_space[5], 1)
+        actions.append(_action)
+        _action = Action(state_space[3], state_space[4], 1)
+        actions.append(_action)
+        _action = Action(state_space[1], state_space[5], 1)
+        actions.append(_action)
+
+
+        action_map = ActionMap(actions) 
+
+        # initiate design under test 
+        solver = SearchProblem(state_space[0], state_space, [state_space[5]], action_map)
+        path = solver.naive_solver()
+
+        # assertion 
+        if path != ["0", "5"]: 
+            raise Exception(f"testcase_harder_solution: Failed - incorrect solution, got {path} expected ['0', '5']")
+        print("testcase_harder_solution: OK")
 
 a = TestSuite() 
 a.run() 
