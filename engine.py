@@ -57,6 +57,10 @@ class SearchProblem:
         self.possible_actions = possible_actions 
 
     def naive_solver(self, suppress_log=True): 
+        # preconditions 
+        if self.initial_state == None: 
+            return [""]
+
         # solver set up 
         frontier = [self.initial_state] 
         explored = {i: False for i in self.state_space}

@@ -1,4 +1,5 @@
 from engine import * 
+from generator import * 
 
 class TestSuite: 
     def __init__(self): 
@@ -126,5 +127,22 @@ class TestSuite:
             raise Exception(f"testcase_harder_solution: Failed - incorrect solution, got {path} expected ['0', '5']")
         print("testcase_harder_solution: OK")
 
+    def testcase_empty_graph(self): 
+        state_space = [] 
+        action_map = None 
+
+        solver = SearchProblem(None, state_space, [], action_map)
+        path = solver.naive_solver() 
+
+        # assertion 
+        if path != [""]: 
+            raise Exception(f"testcase_empty_graph: Failed - path should be empty but got {path}")
+        print("testcase_empty_graph: OK")
+
+    def testcase_generator(self): 
+        generator = Generator() 
+        problem = generator.get_graph(6) 
+        path = problem.naive_solver(suppress_log=False)
+        print(path)
 a = TestSuite() 
 a.run() 
