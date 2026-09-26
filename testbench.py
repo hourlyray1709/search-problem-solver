@@ -9,10 +9,7 @@ class TestSuite:
 
     def run(self): 
         for case in self.cases: 
-            try: 
-                case() 
-            except Exception as e: 
-                print(e)
+            case()
 
     def testcase_make_actions(self): 
         # make states
@@ -110,7 +107,7 @@ class TestSuite:
 
         _action = Action(state_space[0], state_space[5], 1)
         actions.append(_action)
-        _action = Action(state_space[3], state_space[4], 1)
+        _action = Action(state_space[3], state_space[5], 1)
         actions.append(_action)
         _action = Action(state_space[1], state_space[5], 1)
         actions.append(_action)
@@ -120,7 +117,7 @@ class TestSuite:
 
         # initiate design under test 
         solver = SearchProblem(state_space[0], state_space, [state_space[5]], action_map)
-        path = solver.naive_solver()
+        path = solver.naive_solver(suppress_log=True)
 
         # assertion 
         if path != ["0", "5"]: 
@@ -132,7 +129,7 @@ class TestSuite:
         action_map = None 
 
         solver = SearchProblem(None, state_space, [], action_map)
-        path = solver.naive_solver() 
+        path = solver.naive_solver()
 
         # assertion 
         if path != [""]: 
@@ -140,9 +137,22 @@ class TestSuite:
         print("testcase_empty_graph: OK")
 
     def testcase_generator(self): 
+        print("-----------------------------------------------")
+        print("Generator testcase")
+        print("Possible paths found: ")
         generator = Generator() 
         problem = generator.get_graph(6) 
         path = problem.naive_solver(suppress_log=False)
-        print(path)
+        print("Solver returned path: ", path)
+        print("-----------------------------------------------")
+
+    def testcase_generator_2(self): 
+        print("-----------------------------------------------")
+        print("Generator testcase")
+        generator = Generator() 
+        problem = generator.get_graph(12) 
+        path = problem.naive_solver(suppress_log=True)
+        print("Solver returned path: ", path)
+        print("-----------------------------------------------")
 a = TestSuite() 
 a.run() 

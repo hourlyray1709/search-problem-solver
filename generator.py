@@ -2,8 +2,7 @@ from engine import *
 import random 
 
 class Generator: 
-    def __init__(self, random_seed=42, cost_min=1, cost_max=50): 
-        random.seed(random_seed)
+    def __init__(self, cost_min=1, cost_max=50): 
         self.cost_min = cost_min 
         self.cost_max = cost_max
 
@@ -31,8 +30,8 @@ class Generator:
             path_count = path_limit 
 
         for i in range(path_count): 
-            source = random.randint(0, n) 
-            dest = random.randint(0, n)
+            source = random.randint(0, n-1) 
+            dest = random.randint(0, n-1)
 
             if source == dest: 
                 continue 

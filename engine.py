@@ -22,7 +22,7 @@ class ActionMap:
                 self.map[action.source] = [action]
 
     def get_actions(self, s: State) -> list[Action]: 
-        return self.map[s]
+        return self.map.get(s, [])
 
 class Path: 
     def __init__(self, start_state: State): 
@@ -62,58 +62,45 @@ class SearchProblem:
             return [""]
 
         # solver set up 
-        frontier = [self.initial_state] 
-        explored = {i: False for i in self.state_space}
-        self.initial_state.paths_to_start = [Path(self.initial_state)]
+        frontier = [Path(self.initial_state)]
+        solutions: list[Path] = [] 
+        
 
         while len(frontier) > 0: 
-            # set up 
-            current = frontier.pop(0) 
-            if not suppress_log:
-                print(f"naive_solver: currently evaluating node {current.label}")
-            explored[current] = True 
+            current_path = frontier.pop(0) 
+            current_node = current_path.path_list[-1] 
 
-            # find neighbours 
-            possible_actions = self.possible_actions.get_actions(current) 
-            neighbours = [action.dest for action in possible_actions]
+            actions = self.possible_actions.get_actions(current_node) 
+            for action in actions: 
+                neighbour = action.dest 
 
-            if not suppress_log:
-                print(f"naive_solver: found neighbours {[state.label for state in neighbours]}")
+                if neighbour not in current_path.path_list: 
+                    _path = current_path.clone()
+                    _path.add(neighbour, action) 
 
-            for neighbour_idx in range(len(neighbours)): 
-                neighbour = neighbours[neighbour_idx]
-                action = possible_actions[neighbour_idx]
-                if not explored[neighbour]: 
-                    frontier.append(neighbour)
-                    for path in current.paths_to_start: 
-                        _path = path.clone() 
-                        _path.add(neighbour, action)
-                        neighbour.paths_to_start.append(_path)
+                    if neighbour in self.goal_states: 
+                        solutions.append(_path) 
 
-        if not suppress_log:
-            print("naive_solver: Finished main loop")
-
-        # find best path 
-        paths = []
+                    frontier.append(_path) 
         min_cost = None 
         best_path = None 
-        for state in self.goal_states: 
-            for path in state.paths_to_start: 
-                if not suppress_log:
-                    print(f"naive_solver: possible path: {path.get()}")
-                cost = path.get_cost()
+        for path in solutions: 
+            if not suppress_log:
+                print(path.get(),"cost:", path.get_cost())
 
-                if min_cost == None: 
-                    min_cost = cost 
-                    best_path = path 
-                elif cost < min_cost: 
-                    min_cost = cost 
-                    best_path = path 
+            cost = path.get_cost()
 
-                paths.append(path) 
-        if not suppress_log:
-            print(f"naive_solver: best path: {best_path.get()} cost: {min_cost}")
-        return best_path.get() 
+            if min_cost == None: 
+                min_cost = cost 
+                best_path = path 
+            elif cost < min_cost: 
+                min_cost = cost 
+                best_path = path 
+
+        return best_path.get()
+            
+
+
 
         
 
